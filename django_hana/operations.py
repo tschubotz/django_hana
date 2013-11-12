@@ -119,7 +119,11 @@ CREATE SEQUENCE %(seq_name)s RESET BY SELECT IFNULL(MAX(%(column)s),0) + 1 FROM 
         column.
         """
         cursor.execute('select '+self.connection.ops.get_seq_name(table_name,pk_name)+'.currval from dummy')
-        return cursor.fetchone()[0]
+        result = cursor.fetchone()[0]
+        if 'value' in dir(result):
+            return result.value
+        else:
+            return result
 
     def value_to_db_datetime(self, value):
         """

@@ -1,6 +1,7 @@
 from django.db.backends.creation import BaseDatabaseCreation
 from django.db.backends.util import truncate_name
 import django_hana
+import sys
 
 class DatabaseCreation(BaseDatabaseCreation):
     data_types = {
@@ -27,7 +28,7 @@ class DatabaseCreation(BaseDatabaseCreation):
         'TextField':         'nclob',
         'TimeField':         'time',
     }
-    
+
     def sql_create_model(self, model, style, known_models=set()):
         """
         Returns the SQL required to create a single model, as a tuple of:
@@ -109,14 +110,14 @@ class DatabaseCreation(BaseDatabaseCreation):
         return final_output, pending_references
 
 
-        
+
     def sql_for_inline_foreign_key_references(self, field, known_models, style):
         """
         Return the SQL snippet defining the foreign key reference for a field.
                 Foreign key not supported
         """
         return [],False
-        
+
     def sql_destroy_model(self, model, references_to_delete, style):
         """
             Return the DROP TABLE and restraint dropping statements for a single
@@ -127,13 +128,13 @@ class DatabaseCreation(BaseDatabaseCreation):
         # Drop the table now
         qn = self.connection.ops.quote_name
         output = ['%s %s;' % (style.SQL_KEYWORD('DROP TABLE'),style.SQL_TABLE(qn(model._meta.db_table)))]
-        
+
         if model._meta.has_auto_field:
             ds = self.connection.ops.drop_sequence_sql(model._meta.db_table)
             if ds:
                 output.append(ds)
         return output
-        
+
     def _create_test_db(self, verbosity, autoclobber):
         """
         Internal implementation - creates the test db tables.
@@ -146,7 +147,7 @@ class DatabaseCreation(BaseDatabaseCreation):
         qn = self.connection.ops.quote_name
 
         cursor = self.connection.cursor()
-        self._prepare_for_test_db_ddl()
+        # self._prepare_for_test_db_ddl()
         try:
             cursor.execute(
                 "CREATE SCHEMA %s %s" % (qn(test_database_name), suffix))
@@ -176,7 +177,7 @@ class DatabaseCreation(BaseDatabaseCreation):
                 sys.exit(1)
 
         return test_database_name
-                
+
     def _destroy_test_db(self, test_database_name, verbosity):
         """
         Internal implementation - remove the test db tables.
@@ -186,7 +187,7 @@ class DatabaseCreation(BaseDatabaseCreation):
         # to do so, because it's not allowed to delete a database while being
         # connected to it.
         cursor = self.connection.cursor()
-        self._prepare_for_test_db_ddl()
+        # self._prepare_for_test_db_ddl()
         # Wait to avoid "database is being accessed by other users" errors.
         time.sleep(1)
         cursor.execute("DROP SCHEMA %s CASCADE"

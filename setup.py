@@ -9,5 +9,5 @@ setup(name='django_hana',
       author_email='kapil.ratnani@iiitb.net',
       url='https://github.com/kapilratnani/django_hana',
       packages=['django_hana'],
-      requires = ['django (>= 1.4)'],
+      install_requires=['django >= 1.4','jaydebeapi >=0.1.4', 'jpype >= 0.5.4'],
      )

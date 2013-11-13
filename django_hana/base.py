@@ -243,7 +243,8 @@ class DatabaseWrapper(BaseDatabaseWrapper):
         """
         self.ensure_connection()
         if self.features.uses_autocommit and managed:
-            self.connection.setautocommit(auto=False)
+            self.connection.jconn.setAutoCommit(False)
+            # self.connection.setautocommit(auto=False)
 
     def leave_transaction_management(self):
         """
@@ -263,7 +264,8 @@ class DatabaseWrapper(BaseDatabaseWrapper):
             raise
         finally:
             # restore autocommit behavior
-            self.connection.setautocommit(auto=True)
+            # self.connection.setautocommit(auto=True)
+            self.connection.jconn.setAutoCommit(True)
         self._dirty = False
 
     def _commit(self):

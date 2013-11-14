@@ -3,6 +3,7 @@ try:
   from jaydebeapi import connect as j_connect
   from jaydebeapi import Connection as j_Connection
 except ImportError, e:
+  from django.core.exceptions import ImproperlyConfigured
   raise ImproperlyConfigured("Error loading JayDeBeApi. Please install module or switch to hdbcli server version: %s" % e)
 
 # extend the Connection class by the method setautocommit used by django_hana

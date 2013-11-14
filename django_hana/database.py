@@ -1,6 +1,9 @@
-from jaydebeapi import *
-from jaydebeapi import connect as j_connect
-from jaydebeapi import Connection as j_Connection
+try:
+  from jaydebeapi import *
+  from jaydebeapi import connect as j_connect
+  from jaydebeapi import Connection as j_Connection
+except ImportError, e:
+  raise ImproperlyConfigured("Error loading JayDeBeApi. Please install module or switch to hdbcli server version: %s" % e)
 
 # extend the Connection class by the method setautocommit used by django_hana
 class Connection(j_Connection):

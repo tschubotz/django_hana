@@ -7,4 +7,4 @@ class Connection(Connection):
     self.jconn.setAutoCommit(auto)
 
 def connect(address, port, user, password):
-  return connect('com.sap.db.jdbc.Driver', ['jdbc:sap://{0}:{1}/'.format(host, port), user, password], 'ngdbc.jar')
+  return connect('com.sap.db.jdbc.Driver', ['jdbc:sap://{0}:{1}/'.format(address, port), user, password], 'ngdbc.jar')

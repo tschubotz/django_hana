@@ -11,17 +11,15 @@ from django_hana.operations import DatabaseOperations
 from django_hana.client import DatabaseClient
 from django_hana.creation import DatabaseCreation
 from django_hana.introspection import DatabaseIntrospection
-# from django_hana.schema import DatabaseSchemaEditor
 from django.utils.timezone import utc
 from time import time
 
 try:
-    # import jaydebeapi as Database
+    # import database as Database
     from hdbcli import dbapi as Database
 except ImportError as e:
     from django.core.exceptions import ImproperlyConfigured
-    # raise ImproperlyConfigured("Error loading Python JDBC Wrapper necessary to load SAP HANA Python driver: %s" % e)
-    raise ImproperlyConfigured("Error loading SAP HANA Python driver: %s" % e)
+    raise ImproperlyConfigured("Error loading Python JDBC Wrapper necessary to load SAP HANA Python driver: %s" % e)
 
 DatabaseError = Database.DatabaseError
 IntegrityError = Database.IntegrityError
@@ -57,12 +55,7 @@ class CursorWrapper(object):
         self.db = db
         self.is_hana = True
 
-    def set_dirty(self):
-        # if self.db.is_managed():
-        self.db.set_dirty()
-
     def __getattr__(self, attr):
-        self.set_dirty()
         if attr in self.__dict__:
             return self.__dict__[attr]
         else:
@@ -91,7 +84,6 @@ class CursorWrapper(object):
 class CursorDebugWrapper(CursorWrapper):
 
     def execute(self, sql, params=()):
-        self.set_dirty()
         start = time()
         try:
             return CursorWrapper.execute(self,sql, params)
@@ -108,7 +100,6 @@ class CursorDebugWrapper(CursorWrapper):
             )
 
     def executemany(self, sql, param_list):
-        self.set_dirty()
         start = time()
         try:
             return CursorWrapper.executemany(self,sql, param_list)
@@ -194,10 +185,8 @@ class DatabaseWrapper(BaseDatabaseWrapper):
         if self.settings_dict['PORT']:
             conn_params['port'] = self.settings_dict['PORT']
 
-        # self.connection = Database.connect('com.sap.db.jdbc.Driver', ['jdbc:sap://{0}:{1}/'.format(conn_params['host'], conn_params['port']), conn_params['user'],conn_params['password']], 'ngdbc.jar')
         self.connection = Database.connect(address=conn_params['host'],port=int(conn_params['port']),user=conn_params['user'],password=conn_params['password'])
         # set autocommit on by default
-        # self.connection.jconn.setAutoCommit(True)
         self.connection.setautocommit(auto=True)
         self.default_schema=self.settings_dict['NAME']
         # make it upper case
@@ -245,7 +234,6 @@ class DatabaseWrapper(BaseDatabaseWrapper):
         """
         self.ensure_connection()
         if self.features.uses_autocommit and managed:
-            # self.connection.jconn.setAutoCommit(False)
             self.connection.setautocommit(auto=False)
 
     def leave_transaction_management(self):
@@ -267,7 +255,6 @@ class DatabaseWrapper(BaseDatabaseWrapper):
         finally:
             # restore autocommit behavior
             self.connection.setautocommit(auto=True)
-            # self.connection.jconn.setAutoCommit(True)
         self._dirty = False
 
     def _commit(self):

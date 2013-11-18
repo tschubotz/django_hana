@@ -151,6 +151,9 @@ class DatabaseWrapper(BaseDatabaseWrapper):
         self.introspection = DatabaseIntrospection(self)
         self.validation = BaseDatabaseValidation(self)
 
+        # when using hana, autocommit is on by default
+        self.autocommit = True
+
     def close(self):
         self.validate_thread_sharing()
         if self.connection is None:
@@ -187,7 +190,7 @@ class DatabaseWrapper(BaseDatabaseWrapper):
 
         self.connection = Database.connect(address=conn_params['host'],port=int(conn_params['port']),user=conn_params['user'],password=conn_params['password'])
         # set autocommit on by default
-        self.connection.setautocommit(auto=True)
+        self.set_autocommit(True)
         self.default_schema=self.settings_dict['NAME']
         # make it upper case
         self.default_schema=self.default_schema.upper()
@@ -234,7 +237,7 @@ class DatabaseWrapper(BaseDatabaseWrapper):
         """
         self.ensure_connection()
         if self.features.uses_autocommit and managed:
-            self.connection.setautocommit(auto=False)
+            self.set_autocommit(False)
 
     def leave_transaction_management(self):
         """
@@ -254,7 +257,7 @@ class DatabaseWrapper(BaseDatabaseWrapper):
             raise
         finally:
             # restore autocommit behavior
-            self.connection.setautocommit(auto=True)
+            self.set_autocommit(True)
         self._dirty = False
 
     def _commit(self):
@@ -264,3 +267,7 @@ class DatabaseWrapper(BaseDatabaseWrapper):
             except Database.IntegrityError as e:
                 ### TODO: reraise instead of raise - six.reraise was deleted due to incompability with django 1.4
                 raise
+
+    def set_autocommit(self, status):
+        self.connection.setautocommit(auto=status)
+        self.autocommit = status

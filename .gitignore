@@ -3,3 +3,4 @@
 *.pyc
 local_settings.py
 build
+django_hana.egg-info/

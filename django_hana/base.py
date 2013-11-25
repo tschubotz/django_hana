@@ -36,7 +36,7 @@ class DatabaseFeatures(BaseDatabaseFeatures):
     has_select_for_update_nowait = True
     has_bulk_insert = False
     supports_tablespaces = False
-    supports_transactions = True
+    supports_transactions = False
     can_distinct_on_fields = False
     uses_autocommit = True
     uses_savepoints = False

@@ -25,7 +25,7 @@ class DatabaseCreation(BaseDatabaseCreation):
         'PositiveSmallIntegerField': 'smallint',
         'SlugField':         'varchar(%(max_length)s)',
         'SmallIntegerField': 'smallint',
-        'TextField':         'nclob',
+        'TextField':         'clob',
         'TimeField':         'time',
     }
 

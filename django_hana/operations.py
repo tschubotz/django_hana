@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 from django.db.backends import BaseDatabaseOperations
 from django.core.management.color import color_style
 
@@ -137,9 +135,9 @@ CREATE SEQUENCE %(seq_name)s RESET BY SELECT IFNULL(MAX(%(column)s),0) + 1 FROM 
             # HANA doesn't support timezone. If tzinfo is present truncate it.
             # Better set USE_TZ=False in settings.py
             import datetime
-            return unicode(datetime.datetime(value.year,value.month,value.day,value.hour,\
-                    value.minute,value.second,value.microsecond))
-        return unicode(value)
+            return datetime.datetime(value.year,value.month,value.day,value.hour,\
+                    value.minute,value.second,value.microsecond)
+        return value
 
     def lookup_cast(self, lookup_type):
         if lookup_type in ('iexact', 'icontains', 'istartswith', 'iendswith'):

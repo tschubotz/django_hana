@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 from django.db.backends import BaseDatabaseIntrospection
 
 
@@ -29,7 +27,8 @@ class DatabaseIntrospection(BaseDatabaseIntrospection):
         return result
 
     def table_name_converter(self, name):
-        return unicode(name.upper())
+        # maybe remove?
+        return name.upper()
 
     def get_table_description(self, cursor, table_name):
         "Returns a description of the table, with the DB-API cursor.description interface."
